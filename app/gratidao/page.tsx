@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useMemo } from "react";
 import {
   saveGratitudeEntry,
   type GratitudeFormState,
 } from "@/app/actions/gratitude";
 import { SubmitButton } from "@/components/submit-button";
+import { hojeEmSaoPauloYmd } from "@/lib/date-brasilia";
 
 const inputBase =
   "w-full rounded-2xl border border-white/[0.08] bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20";
@@ -20,6 +21,7 @@ export default function GratidaoPage() {
     saveGratitudeEntry,
     gratitudeInitialState
   );
+  const defaultEntryDate = useMemo(() => hojeEmSaoPauloYmd(), []);
 
   return (
     <div className="relative min-h-dvh overflow-x-hidden bg-[#07080c] text-white">
@@ -74,7 +76,22 @@ export default function GratidaoPage() {
               {gratitudeState.message}
             </div>
           ) : null}
+
           <section className="rounded-3xl border border-white/[0.08] bg-white/[0.04] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset] backdrop-blur-xl sm:p-8">
+            <label htmlFor="entry_date" className={labelClass}>
+              Data do diário
+            </label>
+            <input
+              id="entry_date"
+              name="entry_date"
+              type="date"
+              required
+              defaultValue={defaultEntryDate}
+              className={`${inputBase} mb-6 cursor-pointer [color-scheme:dark]`}
+            />
+            <p className="mb-8 text-xs text-white/45">
+              Dia a que estas gratidões se referem (calendário de Brasília).
+            </p>
             <div className="mb-8 border-b border-white/[0.06] pb-8">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400/90">
                 Hoje

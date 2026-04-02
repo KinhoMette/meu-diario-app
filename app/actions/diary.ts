@@ -1,5 +1,6 @@
 "use server";
 
+import { parseEntryDate } from "@/lib/date-brasilia";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type DiaryFormState = {
@@ -33,9 +34,15 @@ export async function saveDiaryEntry(
   formData: FormData
 ): Promise<DiaryFormState> {
   try {
+    const entryDate = parseEntryDate(str(formData, "entry_date"));
+    if (!entryDate) {
+      return { ok: false, message: "Informe uma data válida (dia do diário)." };
+    }
+
     const supabase = createSupabaseServerClient();
-   
+
     const row = {
+      entry_date: entryDate,
       horas_sono: num(formData, "horas_sono"),
       qualidade_sono: str(formData, "qualidade_sono"),
       alimentacao: str(formData, "alimentacao"),

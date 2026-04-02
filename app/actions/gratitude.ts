@@ -1,5 +1,6 @@
 "use server";
 
+import { parseEntryDate } from "@/lib/date-brasilia";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type GratitudeFormState = {
@@ -19,9 +20,15 @@ export async function saveGratitudeEntry(
   formData: FormData
 ): Promise<GratitudeFormState> {
   try {
+    const entryDate = parseEntryDate(str(formData, "entry_date"));
+    if (!entryDate) {
+      return { ok: false, message: "Informe uma data válida (dia do diário)." };
+    }
+
     const supabase = createSupabaseServerClient();
-  
+
     const row = {
+      entry_date: entryDate,
       gratidao_1: str(formData, "gratidao_1"),
       gratidao_1_porque: str(formData, "gratidao_1_porque"),
       gratidao_2: str(formData, "gratidao_2"),
@@ -30,11 +37,10 @@ export async function saveGratitudeEntry(
       gratidao_3_porque: str(formData, "gratidao_3_porque"),
     };
 
-    const { error } = await supabase.from("gratitude_entries").insert([row]);
+    const { error } = await supabase.from("gratitude_entries").insert(row);
 
     if (error) {
-      console.error("SUPABASE ERROR:", error);
-      return { ok: false, message: JSON.stringify(error) };
+      return { ok: false, message: error.message };
     }
 
     return { ok: true, message: "Gratidão salva com sucesso." };

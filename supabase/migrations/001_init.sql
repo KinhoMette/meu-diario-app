@@ -1,8 +1,11 @@
 -- Rode este SQL no Editor SQL do Supabase (SQL → New query) antes de usar o app.
+-- created_at = horário de Brasília (valor armazenado como relógio local, sem fuso).
+-- entry_date = dia a que a entrada se refere (calendário).
 
 create table if not exists public.diary_entries (
   id uuid primary key default gen_random_uuid(),
-  created_at timestamptz not null default now(),
+  created_at timestamp without time zone not null default (timezone('America/Sao_Paulo', now())),
+  entry_date date not null default ((timezone('America/Sao_Paulo', now()))::date),
   horas_sono numeric,
   qualidade_sono text,
   alimentacao text,
@@ -27,7 +30,8 @@ create table if not exists public.diary_entries (
 
 create table if not exists public.gratitude_entries (
   id uuid primary key default gen_random_uuid(),
-  created_at timestamptz not null default now(),
+  created_at timestamp without time zone not null default (timezone('America/Sao_Paulo', now())),
+  entry_date date not null default ((timezone('America/Sao_Paulo', now()))::date),
   gratidao_1 text,
   gratidao_1_porque text,
   gratidao_2 text,

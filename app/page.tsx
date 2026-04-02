@@ -1,9 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState, type ReactNode } from "react";
+import {
+  useActionState,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { saveDiaryEntry, type DiaryFormState } from "@/app/actions/diary";
 import { SubmitButton } from "@/components/submit-button";
+import { hojeEmSaoPauloYmd } from "@/lib/date-brasilia";
 
 function ScaleSlider({
   id,
@@ -96,6 +102,7 @@ export default function Home() {
     saveDiaryEntry,
     diaryInitialState
   );
+  const defaultEntryDate = useMemo(() => hojeEmSaoPauloYmd(), []);
 
   return (
     <div className="relative min-h-dvh overflow-x-hidden bg-[#07080c] text-white">
@@ -150,6 +157,24 @@ export default function Home() {
               {diaryState.message}
             </div>
           ) : null}
+
+          <section className="rounded-3xl border border-white/[0.08] bg-white/[0.04] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset] backdrop-blur-xl sm:p-8">
+            <label htmlFor="entry_date" className={labelClass}>
+              Data do diário
+            </label>
+            <input
+              id="entry_date"
+              name="entry_date"
+              type="date"
+              required
+              defaultValue={defaultEntryDate}
+              className={`${inputBase} cursor-pointer [color-scheme:dark]`}
+            />
+            <p className="mt-2 text-xs text-white/45">
+              Dia a que estas respostas se referem (calendário de Brasília).
+            </p>
+          </section>
+
           <SectionCard
             eyebrow="Camada objetiva"
             title="Corpo e estado"
